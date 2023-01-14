@@ -20,15 +20,18 @@ client_id = f'python-mqtt-{random.randint(0, 100)}'
 
 start_listening_topic = 'hermes/asr/startListening'
 stop_listening_topic = 'hermes/asr/stopListening'
+speak_topic = 'hermes/asr/speak'
+think_topic = 'hermes/asr/think'
+
+
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected to MQTT Broker!")
+    else:
+        print("Failed to connect, return code %d\n", rc)
 
 
 def connect_mqtt():
-    def on_connect(client, userdata, flags, rc):
-        if rc == 0:
-            print("Connected to MQTT Broker!")
-        else:
-            print("Failed to connect, return code %d\n", rc)
-
     client = mqtt_client.Client(client_id)
     client.username_pw_set(username, password)
     client.on_connect = on_connect
@@ -49,7 +52,12 @@ def publish(client, msg, topic):
 def run():
     client = connect_mqtt()
     client.loop_start()
+
     publish(client, {}, start_listening_topic)
+    time.sleep(10)
+    publish(client, {}, think_topic)
+    time.sleep(10)
+    publish(client, {}, speak_topic)
     time.sleep(10)
     publish(client, {}, stop_listening_topic)
 
