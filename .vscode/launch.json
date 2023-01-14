@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "mqtt_respeaker_pixel_ring",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/mqtt_respeaker_pixel_ring.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "publisher",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/publisher.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
