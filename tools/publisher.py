@@ -20,8 +20,8 @@ client_id = f'python-mqtt-{random.randint(0, 100)}'
 
 start_listening_topic = 'hermes/asr/startListening'
 stop_listening_topic = 'hermes/asr/stopListening'
-speak_topic = 'hermes/asr/speak'
-think_topic = 'hermes/asr/think'
+speak_topic = 'hermes/tts/say'
+think_topic = 'rhasspy/asr/recordingFinished'
 
 
 def on_connect(client, userdata, flags, rc):

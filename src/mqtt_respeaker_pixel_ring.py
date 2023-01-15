@@ -13,7 +13,7 @@ from gpiozero import LED
 
 power = LED(5)
 power.on()
-threads = []
+threads = {}
 client = None
 
 SHOULD_TERMINATE = False
@@ -31,8 +31,8 @@ client_id = f'python-mqtt-{random.randint(0, 100)}'
 
 start_listening_topic = 'hermes/asr/startListening'
 stop_listening_topic = 'hermes/asr/stopListening'
-speak_topic = 'hermes/asr/speak'
-think_topic = 'hermes/asr/think'
+speak_topic = 'hermes/tts/say'
+think_topic = 'rhasspy/asr/recordingFinished'
 
 
 def on_connect(client, userdata, flags, rc):
@@ -73,7 +73,7 @@ def on_message(client, userdata, msg):
 
 def on_disconnect(client, userdata, rc):
     if not SHOULD_TERMINATE:
-        client.reconnect()
+        print("MQTT client disconnected\n")
 
 
 def connect_mqtt() -> mqtt_client:
@@ -103,16 +103,22 @@ def light_state_thread():
                 if light_state == "think":
                     pixel_ring.think()
                 last_light_state = light_state
-            time.sleep(0.1)
+            time.sleep(.1)
         except Exception as e:
             print(e)
     print("light_state_thread terminated")
 
 
+def mqtt_client_thread():
+    global client
+    client = connect_mqtt()
+    client.loop_forever()
+
+
 def main_loop():
     while not SHOULD_TERMINATE:
         try:
-            time.sleep(0.5)
+            time.sleep(.5)
         except Exception as e:
             print(e)
     print("main_loop terminated")
@@ -132,18 +138,22 @@ def exit_gracefully(signum, frame):
 
 def run():
     global threads
-    global client
 
     signal.signal(signal.SIGINT, exit_gracefully)
     signal.signal(signal.SIGTERM, exit_gracefully)
 
-    t1 = threading.Thread(target=light_state_thread, args=())
-    threads.append(t1)
-    t1.start()
+    light_state_thread_instance = threading.Thread(
+        target=light_state_thread, args=())
+    threads["light_state"] = light_state_thread_instance
+    light_state_thread_instance.start()
 
-    pixel_ring.set_brightness(10)
-    client = connect_mqtt()
-    client.loop_start()
+    mqtt_client_thread_inst = threading.Thread(
+        target=mqtt_client_thread, args=())
+    threads["mqtt_client"] = mqtt_client_thread_inst
+    mqtt_client_thread_inst.start()
+
+    pixel_ring.set_brightness(20)
+    pixel_ring.change_pattern('echo')
 
     main_loop()
 
