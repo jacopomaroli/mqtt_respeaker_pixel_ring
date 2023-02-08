@@ -19,6 +19,14 @@
             "program": "${workspaceFolder}/tools/publisher.py",
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/test.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

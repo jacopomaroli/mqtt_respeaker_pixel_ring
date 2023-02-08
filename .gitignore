@@ -2,3 +2,5 @@
 .venv
 mqtt_respeaker_pixel_ring.tar
 pixel_ring
+info.log
+config.yaml

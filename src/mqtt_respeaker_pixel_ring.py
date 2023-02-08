@@ -8,8 +8,10 @@ import signal
 from paho.mqtt import client as mqtt_client
 from dotenv import load_dotenv
 from pathlib import Path
+import yaml
 from pixel_ring import pixel_ring
 from gpiozero import LED
+import rule_engine
 
 power = LED(5)
 power.on()
@@ -19,6 +21,9 @@ client = None
 SHOULD_TERMINATE = False
 light_state = "off"
 last_light_state = "off"
+
+config = {}
+inbound_rules = []
 
 dotenv_path = Path('.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -37,7 +42,7 @@ think_topic = 'rhasspy/asr/recordingFinished'
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("Connected to MQTT Broker!")
+        print("Connected to MQTT Broker")
         # https://www.eclipse.org/paho/index.php?page=clients/python/docs/index.php
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
@@ -55,25 +60,29 @@ def on_message(client, userdata, msg):
     global light_state
     msg_payload_json = msg.payload.decode()
     print(f"Received `{msg_payload_json}` from `{msg.topic}` topic")
-    msg_payload = {}
     try:
         msg_payload = json.loads(msg_payload_json)
+
+        event = {
+            "topic": msg.topic,
+            "payload": msg_payload
+        }
+
+        inbound_rule = next(
+            filter(lambda inbound_rule: inbound_rule["rule"].matches(event), inbound_rules), None)
+        light_state_tmp = None
+        if inbound_rule:
+            light_state_tmp = inbound_rule.get("light_state")
+        if light_state_tmp:
+            light_state = light_state_tmp
     except Exception as e:
         print(e)
         return
-    if msg.topic == start_listening_topic:
-        light_state = "listen"
-    if msg.topic == stop_listening_topic:
-        light_state = "off"
-    if msg.topic == speak_topic:
-        light_state = "speak"
-    if msg.topic == think_topic:
-        light_state = "think"
 
 
 def on_disconnect(client, userdata, rc):
     if not SHOULD_TERMINATE:
-        print("MQTT client disconnected\n")
+        print("MQTT client disconnected")
 
 
 def connect_mqtt() -> mqtt_client:
@@ -82,7 +91,7 @@ def connect_mqtt() -> mqtt_client:
     client.on_connect = on_connect
     client.on_message = on_message
     client.on_disconnect = on_disconnect
-    print(f"Connecting to broker \"{broker}\"...\n")
+    print(f"Connecting to broker \"{broker}\"...")
     client.connect(broker, port)
     return client
 
@@ -136,11 +145,28 @@ def exit_gracefully(signum, frame):
     SHOULD_TERMINATE = True
 
 
+def setup_rules():
+    global inbound_rules
+
+    for inbound_rule_config in config["rules"]["inbound"]:
+        inbound_rule = {
+            "rule": rule_engine.Rule(inbound_rule_config["rule"]),
+            "light_state": inbound_rule_config["light_state"]
+        }
+        inbound_rules.append(inbound_rule)
+
+
 def run():
     global threads
 
     signal.signal(signal.SIGINT, exit_gracefully)
     signal.signal(signal.SIGTERM, exit_gracefully)
+
+    with open('config.yaml', 'r') as f:
+        global config
+        config = yaml.safe_load(f)
+
+    setup_rules()
 
     light_state_thread_instance = threading.Thread(
         target=light_state_thread, args=())

@@ -1,0 +1,13 @@
+rules:
+  inbound:
+  - rule: payload.siteId == "satellite1" and topic == "hermes/asr/startListening"
+    light_state: listen
+  - rule: payload.siteId == "satellite1" and topic == "hermes/asr/stopListening"
+    light_state: "off"
+  - rule: payload.siteId == "satellite1" and topic == "hermes/tts/say"
+    light_state: speak
+  - rule: payload.siteId == "satellite1" and topic == "rhasspy/asr/recordingFinished"
+    light_state: think
+  outbound:
+  - rule: action == "button_click"
+    publish: '{"siteId": "satellite1", "action" == "button_click"}'

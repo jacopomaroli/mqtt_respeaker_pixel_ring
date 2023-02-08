@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-# pixel-ring = {editable = true, path = "./pixel_ring"}
+pixel-ring = {editable = true, path = "./pixel_ring"}
 paho-mqtt = "*"
 python-dotenv = "*"
-# gpiozero = "*"
-# "RPi.GPIO" = {editable = true, git = "https://github.com/nosix/raspberry-gpio-emulator/"}
+gpiozero = "*"
+"RPi.GPIO" = "*"
 rule-engine = "*"
 pyyaml = "*"
 

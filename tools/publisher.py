@@ -53,13 +53,13 @@ def run():
     client = connect_mqtt()
     client.loop_start()
 
-    publish(client, {}, start_listening_topic)
-    time.sleep(10)
-    publish(client, {}, think_topic)
-    time.sleep(10)
-    publish(client, {}, speak_topic)
-    time.sleep(10)
-    publish(client, {}, stop_listening_topic)
+    # publish(client, {"siteId": "satellite1"}, start_listening_topic)
+    # time.sleep(10)
+    # publish(client, {}, think_topic)
+    # time.sleep(10)
+    # publish(client, {}, speak_topic)
+    # time.sleep(10)
+    publish(client, {"siteId": "satellite1"}, stop_listening_topic)
 
 
 if __name__ == '__main__':
