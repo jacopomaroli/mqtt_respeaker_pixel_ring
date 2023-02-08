@@ -1,7 +1,7 @@
 version: "3.5"
 services:
   mqtt-respeaker-pixel-ring:
-    image: jacopomaroli/mqtt_respeaker_pixel_ring:master
+    image: jacopomaroli/mqtt_respeaker_pixel_ring:latest
     container_name: mqtt-respeaker-pixel-ring
     env_file:
       - .env
@@ -9,7 +9,8 @@ services:
       - TZ="Europe/London"
       - PYTHONUNBUFFERED=1
     volumes:
-      - ./src:/app
+      - ./config.yaml:/app/config.yaml
     devices:
       - /dev/spidev0.0:/dev/spidev0.0
       - /dev/spidev0.1:/dev/spidev0.1
+      - /dev/gpiomem:/dev/gpiomem
