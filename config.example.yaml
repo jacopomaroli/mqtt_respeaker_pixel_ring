@@ -1,3 +1,9 @@
+mqtt_client_id: rhasspy_satellite_1
+mqtt_subscribe_topics:
+- hermes/asr/startListening
+- hermes/asr/stopListening
+- hermes/tts/say
+- rhasspy/asr/recordingFinished
 rules:
   inbound:
   - rule: payload.siteId == "satellite1" and topic == "hermes/asr/startListening"
@@ -9,5 +15,9 @@ rules:
   - rule: payload.siteId == "satellite1" and topic == "rhasspy/asr/recordingFinished"
     light_state: think
   outbound:
-  - rule: action == "button_click"
-    publish: '{"siteId": "satellite1", "action" == "button_click"}'
+  - rule: event == "button_down"
+    topic: satellite/button
+    payload: '{"siteId": "satellite1", "event" == "button_down"}'
+  - rule: event == "button_up"
+    topic: satellite/button
+    payload: '{"siteId": "satellite1", "event" == "button_up"}'

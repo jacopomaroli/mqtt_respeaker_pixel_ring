@@ -21,10 +21,18 @@
             "justMyCode": true
         },
         {
-            "name": "test",
+            "name": "test inbound",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/tools/test.py",
+            "program": "${workspaceFolder}/tools/test_inbound.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "test outbound",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/test_outbound.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }

@@ -1,6 +1,4 @@
-from msilib import sequence
 import random
-import time
 import os
 import json
 
@@ -13,7 +11,6 @@ load_dotenv(dotenv_path=dotenv_path)
 
 broker = os.environ.get('BROKER')
 port = int(os.environ.get('PORT'))
-topic = os.environ.get('TOPIC')
 username = os.environ.get('USERNAME')
 password = os.environ.get('PASSWORD')
 client_id = f'python-mqtt-{random.randint(0, 100)}'
