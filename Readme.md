@@ -22,7 +22,7 @@ docker-compose up -d
 The configuration system relies on [rule-engine](https://zerosteiner.github.io/rule-engine/). Please refer to their docs for a more complex ruleset
 
 # Limitations
-For now only button up/down events are supported. Implementing long-presses and doubleclicks should be fairly trivial and support for it might be added in the future should there be any interest for it.
+For now only button up/down events are supported. Implementing long-presses and doubleclicks should be fairly trivial and support for it might be added in the future should there be any interest in it.
 
 ## Donations
 If this project makes your life better in any way and you feel like showing appreciation you can buy me a coffee here  
