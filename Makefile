@@ -14,7 +14,7 @@ docker-build-arm64:
 	docker buildx build --platform linux/arm64 --progress=plain --load -t jacopomaroli/mqtt_respeaker_pixel_ring:master -f Dockerfile .
 
 docker-build-multi:
-	docker buildx build --platform=linux/arm/v7 --progress=plain --push -t jacopomaroli/mqtt_respeaker_pixel_ring:latest -f Dockerfile .
+	docker buildx build --platform=linux/arm/v7,linux/arm64 --progress=plain --push -t jacopomaroli/mqtt_respeaker_pixel_ring:latest -f Dockerfile .
 
 docker-run-armv6:
 	docker-compose -f docker-compose-test.yml up
